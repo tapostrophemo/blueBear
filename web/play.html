@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Blue Bear</title>
+<style type="text/css">
+body {
+  position: relative;
+}
+
+#scoreboard {
+  position: absolute;
+  top: 60px;
+  left: 367px;
+  font-family: "Courier New", Courier;
+}
+
+#playground {
+  border: 1px solid black;
+}
+
+#help {
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<div id="wrapper">
+ <h1>Blue Bear</h1>
+ <div id="playground"></div>
+ <div id="scoreboard">
+  <label id="score">Score: <span></span></label><br/>
+  <label id="level">Level: <span></span></label>
+ </div>
+ <div id="help">
+  <p>Use arrow keys (left, right, up, down) to move</p>
+  <p>Use spacebar to attack</p>
+  <p>Press escape to pause</p>
+ </div>
+</div>
+
+<script type="text/javascript" src="res/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="res/jquery.gamequery-0.6.2.js"></script>
+<script type="text/javascript">
+KEY_SPACE =  0;
+KEY_ENTER = 13;
+KEY_ESC   = 27;
+KEY_LEFT  = 37;
+KEY_UP    = 38;
+KEY_RIGHT = 39;
+KEY_DOWN  = 40;
+
+SPRITE_WIDTH  = 24;
+SPRITE_HEIGHT = 32;
+
+PLAYGROUND_WIDTH = 352;
+PLAYGROUND_HEIGHT = 264;
+
+REFRESH_RATE = 30;
+
+var playing, score, level, animations = {};
+
+function setupAnimations() {
+  var playerOpts = {
+    imageURL: "res/player_basic.png",
+    numberOfFrame: 3,
+    delta: SPRITE_WIDTH,
+    rate: 133,
+    type: $.gameQuery.ANIMATION_HORIZONTAL,
+  };
+  playerOpts.offsety = SPRITE_HEIGHT * 3;
+  animations["playerLeft"] = new $.gameQuery.Animation(playerOpts);
+  playerOpts.offsety = 0;
+  animations["playerUp"] = new $.gameQuery.Animation(playerOpts);
+  playerOpts.offsety = SPRITE_HEIGHT;
+  animations["playerRight"] = new $.gameQuery.Animation(playerOpts);
+  playerOpts.offsety = SPRITE_HEIGHT * 2;
+  animations["playerDown"] = new $.gameQuery.Animation(playerOpts);
+}
+
+function setupLayers() {
+  $.playground()
+    .addGroup("main", {width: PLAYGROUND_WIDTH, height:PLAYGROUND_HEIGHT})
+      .addSprite("player", {
+        animation: animations["playerRight"],
+        posx: SPRITE_WIDTH * 3,
+        posy: (PLAYGROUND_HEIGHT - SPRITE_HEIGHT) / 2,
+        width: SPRITE_WIDTH,
+        height: SPRITE_HEIGHT}).end()
+    .addGroup("background", {width: PLAYGROUND_WIDTH, height:PLAYGROUND_HEIGHT}).end();
+}
+
+function updateScoreboard() {
+  $("#score span").text(score);
+  $("#level span").text(level);
+}
+
+function Player(node) {
+  this.node = node;
+
+  this.update = function () {
+    var x = this.node.x();
+    var y = this.node.y();
+
+    if (jQuery.gameQuery.keyTracker[KEY_LEFT] && (x-4) > 0) {
+      this.node.x(-4, true);
+    }
+    if (jQuery.gameQuery.keyTracker[KEY_UP] && (y-3) > 0) {
+      this.node.y(-3, true);
+    }
+    if (jQuery.gameQuery.keyTracker[KEY_RIGHT] && ((x+4) < (PLAYGROUND_WIDTH-SPRITE_WIDTH))) {
+      this.node.x(4, true);
+    }
+    if (jQuery.gameQuery.keyTracker[KEY_DOWN] && ((y+3) < (PLAYGROUND_HEIGHT-SPRITE_HEIGHT))) {
+      this.node.y(3, true);
+    }
+  };
+}
+
+$(function () {
+  $("#playground").playground({width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, keyTracker: true});
+
+  setupAnimations();
+  setupLayers();
+
+  $(document).keydown(function (e) {
+    switch (e.keyCode) {
+      case KEY_LEFT:
+        $("#player").setAnimation(animations["playerLeft"]);
+        break;
+      case KEY_UP:
+        $("#player").setAnimation(animations["playerUp"]);
+        break;
+      case KEY_RIGHT:
+        $("#player").setAnimation(animations["playerRight"]);
+        break;
+      case KEY_DOWN:
+        $("#player").setAnimation(animations["playerDown"]);
+        break;
+    }
+  });
+
+  score = 0;
+  level = 1;
+  playing = true;
+
+  $.playground().startGame(function () {
+    updateScoreboard();
+
+    $("#player")[0].player = new Player($("#player"));
+
+    $.playground().registerCallback(function () {
+      if (playing) {
+        $("#player")[0].player.update();
+      }
+    }, REFRESH_RATE);
+  });
+});
+</script>
+</body>
+</html>
+
