@@ -10,13 +10,24 @@ body {
 
 #scoreboard {
   position: absolute;
-  top: 60px;
+  top: 0;
   left: 367px;
   font-family: "Courier New", Courier;
+  color: #223;
+}
+
+#controls {
+  position: absolute;
+  top: 156px;
+  left: 367px;
+}
+#arrows {
+  text-align: center;
 }
 
 #playground {
-  border: 1px solid black;
+  border: 1px solid #445;
+  border-radius: 7px;
 }
 
 #help {
@@ -26,18 +37,24 @@ body {
 </head>
 <body>
 
-<div id="wrapper">
- <h1>Blue Bear</h1>
- <div id="playground"></div>
- <div id="scoreboard">
-  <label id="score">Score: <span></span></label><br/>
-  <label id="level">Level: <span></span></label>
+<div id="playground"></div>
+<div id="scoreboard">
+ <label id="score">Score: <span></span></label><br/>
+ <label id="level">Level: <span></span></label>
+</div>
+<div id="controls">
+ <div id="arrows">
+  <button id="arrowUp">&uarr;</button><br/>
+  <button id="arrowLeft">&larr;</button>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <button id="arrowRight">&rarr;</button><br/>
+  <button id="arrowDown">&darr;</button>
  </div>
- <div id="help">
-  <p>Use arrow keys (left, right, up, down) to move</p>
-  <p>Use spacebar to attack</p>
-  <p>Press escape to pause</p>
- </div>
+</div>
+<div id="help">
+ <p>Use arrow keys (left, right, up, down) to move</p>
+ <p>Use spacebar to attack</p>
+ <p>Press escape to pause</p>
 </div>
 
 <script type="text/javascript" src="res/jquery-1.7.2.min.js"></script>
@@ -125,7 +142,7 @@ $(function () {
   setupLayers();
 
   $(document).keydown(function (e) {
-    switch (e.keyCode) {
+    switch (e.which) {
       case KEY_LEFT:
         $("#player").setAnimation(animations["playerLeft"]);
         break;
@@ -140,12 +157,25 @@ $(function () {
         break;
     }
   });
+  $("#arrows button").click(function (e) {
+    var kde = $.Event("keydown");
+    switch (this.id) {
+      // NB: ---------------------------------> gameTracker not checking 'which' on keydown events
+      case 'arrowLeft':  kde.which = KEY_LEFT;  kde.keyCode = KEY_LEFT;  break;
+      case 'arrowUp':    kde.which = KEY_UP;    kde.keyCode = KEY_UP;    break;
+      case 'arrowRight': kde.which = KEY_RIGHT; kde.keyCode = KEY_RIGHT; break;
+      case 'arrowDown':  kde.which = KEY_DOWN;  kde.keyCode = KEY_DOWN;  break;
+    }
+    $(document).trigger(kde);
+    return false;
+  });
 
   score = 0;
   level = 1;
   playing = true;
 
   $.playground().startGame(function () {
+    window.focus();
     updateScoreboard();
 
     $("#player")[0].player = new Player($("#player"));
