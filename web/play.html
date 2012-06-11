@@ -208,14 +208,13 @@ var map = [[4, 4, 4, 6, 6, 6, 6, 6, 6, 6],
   $.playground()
     .addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
       .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-        .addTilemap("tilemap", map,  animations, {width: 44, height: 33, sizex: 10, sizey: 8}).end()
-      .addGroup("main", {width: PLAYGROUND_WIDTH, height:PLAYGROUND_HEIGHT})
-        .addSprite("player", {
-          animation: animations["playerStoppedRight"],
-          posx: SPRITE_WIDTH * 3,
-          posy: (PLAYGROUND_HEIGHT - SPRITE_HEIGHT) / 2,
-          width: SPRITE_WIDTH,
-          height: SPRITE_HEIGHT}).end();
+        .addTilemap("tilemap", map,  animations, {width: 44, height: 33, sizex: 10, sizey: 8}).end().end()
+      .addSprite("player", {
+        animation: animations["playerStoppedRight"],
+        posx: SPRITE_WIDTH * 3,
+        posy: (PLAYGROUND_HEIGHT - SPRITE_HEIGHT) / 2,
+        width: SPRITE_WIDTH,
+        height: SPRITE_HEIGHT});
 }
 
 function updateScoreboard() {
@@ -225,27 +224,27 @@ function updateScoreboard() {
 
 function Player(node) {
   this.node = node;
+  this.moved = false;
 
   this.update = function () {
     var x = this.node.x();
     var y = this.node.y();
-    this.moving = false;
 
     if (jQuery.gameQuery.keyTracker[KEY_LEFT] && (x-4) > 0) {
       this.node.x(-4, true);
-      this.moving = true;
+      this.moved = true;
     }
     if (jQuery.gameQuery.keyTracker[KEY_UP] && (y-3) > 0) {
       this.node.y(-3, true);
-      this.moving = true;
+      this.moved = true;
     }
     if (jQuery.gameQuery.keyTracker[KEY_RIGHT] && ((x+4) < (PLAYGROUND_WIDTH-SPRITE_WIDTH))) {
       this.node.x(4, true);
-      this.moving = true;
+      this.moved = true;
     }
     if (jQuery.gameQuery.keyTracker[KEY_DOWN] && ((y+3) < (PLAYGROUND_HEIGHT-SPRITE_HEIGHT))) {
       this.node.y(3, true);
-      this.moving = true;
+      this.moved = true;
     }
   };
 }
@@ -254,8 +253,9 @@ function Background(node) {
   this.node = node;
 
   this.update = function (player) {
-    if (player.moving) {
+    if (player.moved) {
       this.node.x(-1, true);
+      player.node.x(-1, true);
     }
   };
 }
