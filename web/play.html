@@ -119,6 +119,15 @@ function setupAnimations() {
   playerStoppedOpts.offsety = SPRITE_HEIGHT * 2;
   animations["playerStoppedDown"] = new $.gameQuery.Animation(playerStoppedOpts);
 
+  animations["honeypot"] = new $.gameQuery.Animation({
+    imageURL: "res/honeypot.png",
+    numberOfFrame: 1,
+    delta: 0,
+    rate: 0,
+    offsetx: 0,
+    offsety: 0,
+    type: $.gameQuery.ANIMATION_ONCE});
+
 // Generated with gQ's Tiles map editor
 animations[0] =  new $.gameQuery.Animation({
     imageURL:      'res/ground_basic.png',
@@ -196,25 +205,63 @@ animations[7] =  new $.gameQuery.Animation({
 
 function setupLayers() {
 // Generated with gQ's Tiles map editor
-var map = [[0, 0, 4, 0, 6, 6, 6, 6, 0, 0, 0],
-           [4, 4, 3, 6, 5, 5, 5, 5, 6, 6, 6],
-           [8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 7],
-           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
-           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
-           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
-           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
-           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1]];
+var map = [[2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]];
 
+  var honeypots = 1;
   $.playground()
     .addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
       .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-        .addTilemap('tilemap', map,  animations, {width: 44, height: 33, sizex: 11, sizey: 8}).end().end()
+        .addTilemap('tilemap', map,  animations, {width: 44, height: 33, sizex: 18, sizey: 8}).end().end()
       .addSprite("player", {
         animation: animations["playerStoppedRight"],
         posx: SPRITE_WIDTH * 3,
         posy: (PLAYGROUND_HEIGHT - SPRITE_HEIGHT) / 2,
         width: SPRITE_WIDTH,
-        height: SPRITE_HEIGHT});
+        height: SPRITE_HEIGHT})
+      .addGroup("rewards", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 4 + 18/2,
+          posy: TILE_HEIGHT * 4 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 7 + 18/2,
+          posy: TILE_HEIGHT * 2 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 9 + 18/2,
+          posy: TILE_HEIGHT * 4 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 12 + 18/2,
+          posy: TILE_HEIGHT * 7 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 14 + 18/2,
+          posy: TILE_HEIGHT * 0 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 15 + 18/2,
+          posy: TILE_HEIGHT * 3 + 14/2,
+          width: 22,
+          height: 15}).end();
 }
 
 function updateScoreboard() {
@@ -247,6 +294,25 @@ function Player(node) {
       this.moved = true;
     }
   };
+}
+
+function Rewards(node) {
+  this.node = node;
+
+  this.update = function (player) {
+    if (player.moved) {
+      this.node.x(-1, true);
+    }
+    checkCollisions(player);
+  };
+
+  function checkCollisions(player) {
+    player.node.collision(".group,.reward").each(function () {
+      $(this).remove();
+      score++;
+      updateScoreboard();
+    });
+  }
 }
 
 function Background(node) {
@@ -305,12 +371,18 @@ $(function () {
 
     $("#player")[0].player = new Player($("#player"));
     $("#background")[0].background = new Background($("#background"));
+    $("#rewards")[0].rewards = new Rewards($("#rewards"));
+    for (var i = 1; i <= 6; i++) {
+      var h = $("#honeypot_"+i);
+      h.addClass("reward");
+    }
 
     $.playground().registerCallback(function () {
       if (playing) {
         var p = $("#player")[0].player;
         p.update();
         $("#background")[0].background.update(p);
+        $("#rewards")[0].rewards.update(p);
       }
     }, REFRESH_RATE);
   });
