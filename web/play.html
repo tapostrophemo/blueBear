@@ -81,6 +81,10 @@ REFRESH_RATE = 30;
 
 var playing, paused, score, level, animations = [];
 
+function setupPlayground() {
+  $("#playground").playground({width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, keyTracker: true});
+}
+
 function setupAnimations() {
   var playerOpts = {
     imageURL: "res/player_basic.png",
@@ -92,7 +96,7 @@ function setupAnimations() {
   var playerStoppedOpts = {
     imageURL: "res/player_basic.png",
     numberOfFrame: 1,
-    delta: SPRITE_WIDTH,
+    delta: 0,
     rate: 0,
     type: $.gameQuery.ANIMATION_ONCE,
     offsetx: SPRITE_WIDTH,
@@ -236,13 +240,12 @@ var map = [[2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
     .addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
       .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
         .addTilemap('tilemap', map,  animations, {width: 44, height: 33, sizex: 18, sizey: 8}).end().end()
-      .addGroup("background2", {width: 11, height: PLAYGROUND_HEIGHT})
-        .addSprite("finishLine", {
-          animation: animations["finishLine"],
-          posx: $("#tilemap").width()-TILE_WIDTH,
-          posy: 0,
-          width: TILE_WIDTH,
-          height: PLAYGROUND_HEIGHT}).end()
+      .addSprite("finishLine", {
+        animation: animations["finishLine"],
+        posx: $("#tilemap").width()-TILE_WIDTH,
+        posy: 0,
+        width: TILE_WIDTH,
+        height: PLAYGROUND_HEIGHT})
       .addSprite("player", {
         animation: animations["playerStoppedRight"],
         posx: SPRITE_WIDTH * 3,
@@ -326,19 +329,19 @@ function Player(node) {
     var x = this.node.x();
     var y = this.node.y();
 
-    if (jQuery.gameQuery.keyTracker[KEY_LEFT] && (x-4) > 0) {
+    if ($.gameQuery.keyTracker[KEY_LEFT] && (x-4) > 0) {
       this.node.x(-4, true);
       this.moved = true;
     }
-    if (jQuery.gameQuery.keyTracker[KEY_UP] && (y-3) > 0) {
+    if ($.gameQuery.keyTracker[KEY_UP] && (y-3) > 0) {
       this.node.y(-3, true);
       this.moved = true;
     }
-    if (jQuery.gameQuery.keyTracker[KEY_RIGHT] && ((x+4) < (PLAYGROUND_WIDTH-SPRITE_WIDTH))) {
+    if ($.gameQuery.keyTracker[KEY_RIGHT] && ((x+4) < (PLAYGROUND_WIDTH-SPRITE_WIDTH))) {
       this.node.x(4, true);
       this.moved = true;
     }
-    if (jQuery.gameQuery.keyTracker[KEY_DOWN] && ((y+3) < (PLAYGROUND_HEIGHT-SPRITE_HEIGHT))) {
+    if ($.gameQuery.keyTracker[KEY_DOWN] && ((y+3) < (PLAYGROUND_HEIGHT-SPRITE_HEIGHT))) {
       this.node.y(3, true);
       this.moved = true;
     }
@@ -408,7 +411,7 @@ function FinishLine(node) {
     }
   };
 
-  this.isFinished = function (player) {
+  this.crossedBy = function (player) {
     return player.node.x() > this.node.x();
   };
 }
@@ -425,17 +428,24 @@ function Background(node) {
 }
 
 $(function () {
-  $("#playground").playground({width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, keyTracker: true});
+  score = 0;
+  level = 1;
+  playing = true;
+  paused = false;
 
+  setupPlayground();
   setupAnimations();
   setupLayers();
 
+  var player = $("#player")[0].player = new Player($("#player"));
+  var $player = player.node;
+
   $(document).keydown(function (e) {
     switch (e.which) {
-      case KEY_LEFT:  $("#player").setAnimation(animations["playerLeft"]);  break;
-      case KEY_UP:    $("#player").setAnimation(animations["playerUp"]);    break;
-      case KEY_RIGHT: $("#player").setAnimation(animations["playerRight"]); break;
-      case KEY_DOWN:  $("#player").setAnimation(animations["playerDown"]);  break;
+      case KEY_LEFT:  $player.setAnimation(animations["playerLeft"]);  break;
+      case KEY_UP:    $player.setAnimation(animations["playerUp"]);    break;
+      case KEY_RIGHT: $player.setAnimation(animations["playerRight"]); break;
+      case KEY_DOWN:  $player.setAnimation(animations["playerDown"]);  break;
       case KEY_ESC:   paused = !paused;
     }
   });
@@ -453,17 +463,12 @@ $(function () {
   });
   $(document).keyup(function (e) {
     switch (e.which) {
-      case KEY_LEFT:  $("#player").setAnimation(animations["playerStoppedLeft"]);  break;
-      case KEY_UP:    $("#player").setAnimation(animations["playerStoppedUp"]);    break;
-      case KEY_RIGHT: $("#player").setAnimation(animations["playerStoppedRight"]); break;
-      case KEY_DOWN:  $("#player").setAnimation(animations["playerStoppedDown"]);  break;
+      case KEY_LEFT:  $player.setAnimation(animations["playerStoppedLeft"]);  break;
+      case KEY_UP:    $player.setAnimation(animations["playerStoppedUp"]);    break;
+      case KEY_RIGHT: $player.setAnimation(animations["playerStoppedRight"]); break;
+      case KEY_DOWN:  $player.setAnimation(animations["playerStoppedDown"]);  break;
     }
   });
-
-  score = 0;
-  level = 1;
-  playing = true;
-  paused = false;
 
   $.playground().startGame(function () {
     var i;
@@ -471,15 +476,14 @@ $(function () {
     window.focus();
     updateScoreboard();
 
-    $("#player")[0].player = new Player($("#player"));
-    $("#background")[0].background = new Background($("#background"));
-    $("#finishLine")[0].finishLine = new FinishLine($("#finishLine"));
-    $("#rewards")[0].rewards = new Rewards($("#rewards"));
+    var background = $("#background")[0].background = new Background($("#background"));
+    var finishLine = $("#finishLine")[0].finishLine = new FinishLine($("#finishLine"));
+    var rewards = $("#rewards")[0].rewards = new Rewards($("#rewards"));
     for (i = 1; i <= 6; i++) {
       var h = $("#honeypot_"+i);
       h.addClass("reward");
     }
-    $("#obstacles")[0].obstacles = new Obstacles($("#obstacles"));
+    var obstacles = $("#obstacles")[0].obstacles = new Obstacles($("#obstacles"));
     for (i = 1; i <= 4; i++) {
       var b = $("#bush_"+i);
       b.addClass("obstacle");
@@ -487,15 +491,13 @@ $(function () {
 
     $.playground().registerCallback(function () {
       if (playing && !paused) {
-        var p = $("#player")[0].player;
-        p.update();
-        $("#background")[0].background.update(p);
-        $("#rewards")[0].rewards.update(p);
-        $("#obstacles")[0].obstacles.update(p);
+        player.update();
+        background.update(player);
+        rewards.update(player);
+        obstacles.update(player);
 
-        var f = $("#finishLine")[0].finishLine;
-        f.update(p);
-        if (f.isFinished(p)) {
+        finishLine.update(player);
+        if (finishLine.crossedBy(player)) {
           return true;
         }
       }
