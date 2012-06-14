@@ -54,7 +54,6 @@ body {
 </div>
 <div id="help">
  <p>Use arrow keys (left, right, up, down) to move</p>
- <p>Use spacebar to attack</p>
  <p>Press escape to pause</p>
 </div>
 
@@ -80,7 +79,7 @@ PLAYGROUND_HEIGHT = 264;
 
 REFRESH_RATE = 30;
 
-var playing, score, level, animations = [];
+var playing, paused, score, level, animations = [];
 
 function setupAnimations() {
   var playerOpts = {
@@ -127,6 +126,15 @@ function setupAnimations() {
     offsetx: 0,
     offsety: 0,
     type: $.gameQuery.ANIMATION_ONCE});
+
+  animations["finishLine"] = new $.gameQuery.Animation({
+    imageURL: "res/finish_line.png",
+    numberOfFrame: 2,
+    delta: 11,
+    rate: 175,
+    offsetx: 0,
+    offsety: 0,
+    type: $.gameQuery.ANIMATION_HORIZONTAL});
 
 // Generated with gQ's Tiles map editor
 animations[0] =  new $.gameQuery.Animation({
@@ -219,6 +227,13 @@ var map = [[2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
     .addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
       .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
         .addTilemap('tilemap', map,  animations, {width: 44, height: 33, sizex: 18, sizey: 8}).end().end()
+      .addGroup("background2", {width: 11, height: PLAYGROUND_HEIGHT})
+        .addSprite("finishLine", {
+          animation: animations["finishLine"],
+          posx: $("#tilemap").width()-TILE_WIDTH,
+          posy: 0,
+          width: TILE_WIDTH,
+          height: PLAYGROUND_HEIGHT}).end()
       .addSprite("player", {
         animation: animations["playerStoppedRight"],
         posx: SPRITE_WIDTH * 3,
@@ -315,6 +330,20 @@ function Rewards(node) {
   }
 }
 
+function FinishLine(node) {
+  this.node = node;
+
+  this.update = function (player) {
+    if (player.moved) {
+      this.node.x(-1, true);
+    }
+  };
+
+  this.isFinished = function (player) {
+    return player.node.x() > this.node.x();
+  };
+}
+
 function Background(node) {
   this.node = node;
 
@@ -338,6 +367,7 @@ $(function () {
       case KEY_UP:    $("#player").setAnimation(animations["playerUp"]);    break;
       case KEY_RIGHT: $("#player").setAnimation(animations["playerRight"]); break;
       case KEY_DOWN:  $("#player").setAnimation(animations["playerDown"]);  break;
+      case KEY_ESC:   paused = !paused;
     }
   });
   $("#arrows button").click(function (e) {
@@ -364,6 +394,7 @@ $(function () {
   score = 0;
   level = 1;
   playing = true;
+  paused = false;
 
   $.playground().startGame(function () {
     window.focus();
@@ -371,6 +402,7 @@ $(function () {
 
     $("#player")[0].player = new Player($("#player"));
     $("#background")[0].background = new Background($("#background"));
+    $("#finishLine")[0].finishLine = new FinishLine($("#finishLine"));
     $("#rewards")[0].rewards = new Rewards($("#rewards"));
     for (var i = 1; i <= 6; i++) {
       var h = $("#honeypot_"+i);
@@ -378,11 +410,17 @@ $(function () {
     }
 
     $.playground().registerCallback(function () {
-      if (playing) {
+      if (playing && !paused) {
         var p = $("#player")[0].player;
         p.update();
         $("#background")[0].background.update(p);
         $("#rewards")[0].rewards.update(p);
+
+        var f = $("#finishLine")[0].finishLine;
+        f.update(p);
+        if (f.isFinished(p)) {
+          return true;
+        }
       }
     }, REFRESH_RATE);
   });
