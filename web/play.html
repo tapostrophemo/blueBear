@@ -127,6 +127,15 @@ function setupAnimations() {
     offsety: 0,
     type: $.gameQuery.ANIMATION_ONCE});
 
+  animations["bush"] = new $.gameQuery.Animation({
+    imageURL: "res/bush.png",
+    numberOfFrame: 1,
+    delta: 0,
+    rate: 0,
+    offsetx: 0,
+    offsety: 0,
+    type: $.gameQuery.ANIMATION_ONCE});
+
   animations["finishLine"] = new $.gameQuery.Animation({
     imageURL: "res/finish_line.png",
     numberOfFrame: 2,
@@ -222,7 +231,7 @@ var map = [[2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
            [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
            [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]];
 
-  var honeypots = 1;
+  var honeypots = 1, bushes = 1;
   $.playground()
     .addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
       .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
@@ -240,6 +249,31 @@ var map = [[2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
         posy: (PLAYGROUND_HEIGHT - SPRITE_HEIGHT) / 2,
         width: SPRITE_WIDTH,
         height: SPRITE_HEIGHT})
+      .addGroup("obstacles", {width: $("#tilemap").width(), height: PLAYGROUND_HEIGHT})
+        .addSprite("bush_"+bushes++, {
+          animation: animations["bush"],
+          posx: TILE_WIDTH * 3 + 30/2,
+          posy: TILE_HEIGHT * 3 + 30/2,
+          width: 30,
+          height: 30})
+        .addSprite("bush_"+bushes++, {
+          animation: animations["bush"],
+          posx: TILE_WIDTH * 8 + 30/2,
+          posy: TILE_HEIGHT * 6 + 30/2,
+          width: 30,
+          height: 30})
+        .addSprite("bush_"+bushes++, {
+          animation: animations["bush"],
+          posx: TILE_WIDTH * 12 + 30/2,
+          posy: TILE_HEIGHT * 4 + 30/2,
+          width: 30,
+          height: 30})
+        .addSprite("bush_"+bushes++, {
+          animation: animations["bush"],
+          posx: TILE_WIDTH * 16 + 30/2,
+          posy: TILE_HEIGHT * 8 + 30/2,
+          width: 30,
+          height: 30}).end()
       .addGroup("rewards", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
         .addSprite("honeypot_"+honeypots++, {
           animation: animations["honeypot"],
@@ -309,6 +343,24 @@ function Player(node) {
       this.moved = true;
     }
   };
+
+  this.bumpBack = function () {
+    var x = this.node.x();
+    var y = this.node.y();
+
+    if ($.gameQuery.keyTracker[KEY_LEFT]) {
+      this.node.x(4, true);
+    }
+    if ($.gameQuery.keyTracker[KEY_UP]) {
+      this.node.y(3, true);
+    }
+    if ($.gameQuery.keyTracker[KEY_RIGHT]) {
+      this.node.x(-4, true);
+    }
+    if ($.gameQuery.keyTracker[KEY_DOWN]) {
+      this.node.y(-3, true);
+    }
+  };
 }
 
 function Rewards(node) {
@@ -326,6 +378,23 @@ function Rewards(node) {
       $(this).remove();
       score++;
       updateScoreboard();
+    });
+  }
+}
+
+function Obstacles(node) {
+  this.node = node;
+
+  this.update = function (player) {
+    if (player.moved) {
+      this.node.x(-1, true);
+    }
+    checkCollisions(player);
+  }
+
+  function checkCollisions(player) {
+    player.node.collision(".group,.obstacle").each(function () {
+      player.bumpBack();
     });
   }
 }
@@ -397,6 +466,8 @@ $(function () {
   paused = false;
 
   $.playground().startGame(function () {
+    var i;
+
     window.focus();
     updateScoreboard();
 
@@ -404,9 +475,14 @@ $(function () {
     $("#background")[0].background = new Background($("#background"));
     $("#finishLine")[0].finishLine = new FinishLine($("#finishLine"));
     $("#rewards")[0].rewards = new Rewards($("#rewards"));
-    for (var i = 1; i <= 6; i++) {
+    for (i = 1; i <= 6; i++) {
       var h = $("#honeypot_"+i);
       h.addClass("reward");
+    }
+    $("#obstacles")[0].obstacles = new Obstacles($("#obstacles"));
+    for (i = 1; i <= 4; i++) {
+      var b = $("#bush_"+i);
+      b.addClass("obstacle");
     }
 
     $.playground().registerCallback(function () {
@@ -415,6 +491,7 @@ $(function () {
         p.update();
         $("#background")[0].background.update(p);
         $("#rewards")[0].rewards.update(p);
+        $("#obstacles")[0].obstacles.update(p);
 
         var f = $("#finishLine")[0].finishLine;
         f.update(p);
