@@ -1,10 +1,10 @@
 Feature complete:
-1.a, 1.b, 1.c, 2.a., 2.c, 3.a, 3.b, 5.a
+x1.a, x1.b, x1.c, 2.a., 2.c, 3.a, 3.b, 5.a
 
 1. screen transitions
   xa. start game ("click to play" sort of thing, splash screen)
   xb. paused state screen overlay
-  c. win! :) and transition to next level
+  xc. win! :) and transition to next level
   d. lose :( and replay option
 2. physics
   a. prevent walking in air (unless wearing flying suit)

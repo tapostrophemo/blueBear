@@ -46,12 +46,19 @@ body {
   padding-top: 80px;
   vertical-align: middle;
   color: white;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.75);
 }
 .statusOverlay span {
   display: block;
   font-family: monospace;
   font-size: 15px;
+}
+.statusOverlay a {
+  color: white;
+  text-decoration: none;
+}
+.statusOverlay a:hover {
+  text-decoration: underline;
 }
 
 .hidden {
@@ -556,6 +563,9 @@ $(function () {
 
         finishLine.update(player);
         if (finishLine.crossedBy(player)) {
+          $("#win").fadeIn(REFRESH_RATE * 4);
+          $(document).unbind("keydown");
+          $(document).unbind("keyup");
           return true;
         }
       }
