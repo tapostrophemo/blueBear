@@ -1,0 +1,29 @@
+Feature complete:
+1.a, 1.b, 1.c, 2.a., 2.c, 3.a, 3.b, 5.a
+
+1. screen transitions
+  xa. start game ("click to play" sort of thing, splash screen)
+  xb. paused state screen overlay
+  c. win! :) and transition to next level
+  d. lose :( and replay option
+2. physics
+  a. prevent walking in air (unless wearing flying suit)
+  b. prevent walking on water (unless wearing swimming/dive suit)
+  c. stop scrolling when finish line fully in view
+3. gameplay
+  a. die if scrolled off left side of screen
+  b. add more levels(!)
+  c. add hostile obstacles
+  d. add enemies (and ways to kill them)
+  e. add level/time point bonuses
+4. integration (server-side?)
+  a. save high scores (also need high score screen)
+  b. tracking cookies
+5. experience
+  a. make mobile/touch version work(!)
+  b. way better graphics($?)
+  c. background music, sound fx
+6. technical debt
+  a. factor out core game play/control logic to common file
+  b. make level-specific separate HTML files (assumes next-level transition will load new level file)
+
