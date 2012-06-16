@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Blue Bear</title>
+<link href='http://fonts.googleapis.com/css?family=Permanent+Marker' rel='stylesheet' type='text/css'>
 <style type="text/css">
 body {
   position: relative;
@@ -12,7 +13,7 @@ body {
   position: absolute;
   top: 0;
   left: 367px;
-  font-family: "Courier New", Courier;
+  font-family: monospace;
   color: #223;
 }
 
@@ -31,16 +32,47 @@ body {
   background-color: #bcf;
 }
 
+.statusOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  text-align: center;
+  font-family: "Permanent Marker", cursive;
+  font-size: 48px;
+  line-height: 75px;
+  width: 352px;
+  height: 184px;
+  padding-top: 80px;
+  vertical-align: middle;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.statusOverlay span {
+  display: block;
+  font-family: monospace;
+  font-size: 15px;
+}
+
+.hidden {
+  display: none;
+}
+
 #help {
   position: absolute;
   top: 275px;
-  font-family: "Courier New", Courier;
+  font-family: monospace;
 }
 </style>
 </head>
 <body>
 
-<div id="playground"></div>
+<div id="playground">
+ <div id="start" class="statusOverlay">START<span>(press any arrow key to begin)</span></div>
+ <div id="paused" class="statusOverlay hidden">PAUSED<span>(press ESC to continue)</span></div>
+ <div id="win" class="statusOverlay hidden">WINNER!<span>(<a href="level2.html">click for next level</a>)</span></div>
+ <div id="lose" class="statusOverlay hidden">TRY AGAIN!<span>(<a href="#" onclick="">click to try again</a>)</span></div>
+</div>
 <div id="scoreboard">
  <label id="score">Score: <span></span></label><br/>
  <label id="level">Level: <span></span></label>
@@ -81,7 +113,7 @@ PLAYGROUND_HEIGHT = 264;
 
 REFRESH_RATE = 30;
 
-var playing, paused, score, level, animations = [];
+var playing, started, paused, score, level, animations = [];
 
 function setupPlayground() {
   $("#playground").playground({width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, keyTracker: true});
@@ -323,6 +355,13 @@ function updateScoreboard() {
   $("#level span").text(level);
 }
 
+function isArrowKey(event) {
+  return event.which == KEY_LEFT  ||
+         event.which == KEY_UP    ||
+         event.which == KEY_RIGHT ||
+         event.which == KEY_DOWN;
+}
+
 function Player(node) {
   this.node = node;
   this.moved = false;
@@ -432,6 +471,7 @@ function Background(node) {
 $(function () {
   score = 0;
   level = 1;
+  started = false;
   playing = true;
   paused = false;
 
@@ -443,12 +483,28 @@ $(function () {
   var $player = player.node;
 
   $(document).keydown(function (e) {
+    if (!started && e.which == KEY_ESC) {
+      return;
+    }
+
+    if (!started && isArrowKey(e)) {
+      $("#start").fadeOut(REFRESH_RATE * 2);
+      started = true;
+    }
+
     switch (e.which) {
       case KEY_LEFT:  $player.setAnimation(animations["playerLeft"]);  break;
       case KEY_UP:    $player.setAnimation(animations["playerUp"]);    break;
       case KEY_RIGHT: $player.setAnimation(animations["playerRight"]); break;
       case KEY_DOWN:  $player.setAnimation(animations["playerDown"]);  break;
-      case KEY_ESC:   paused = !paused;
+      case KEY_ESC:
+        paused = !paused;
+        if (paused) {
+          $("#paused").fadeIn(REFRESH_RATE * 3);
+        } else {
+          $("#paused").fadeOut(REFRESH_RATE);
+        }
+        break;
     }
   });
   $("#arrows button").click(function (e) {
