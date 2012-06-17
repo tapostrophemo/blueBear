@@ -1,17 +1,18 @@
 Feature complete:
-x1.a, x1.b, x1.c, 2.a., x2.c, 3.a (therfore 1d), 3.b, 5.a
+x1.a, x1.b, x1.c, 2.a., x2.c, x3.a (therfore x1d), 3.b, 5.a
 
 1. screen transitions
   xa. start game ("click to play" sort of thing, splash screen)
   xb. paused state screen overlay
   xc. win! :) and transition to next level
-  d. lose :( and replay option
+  xd. lose :( and replay option
 2. physics
   a. prevent walking in air (unless wearing flying suit)
   b. prevent walking on water (unless wearing swimming/dive suit)
   xc. stop scrolling when finish line fully in view
 3. gameplay
-  a. die if scrolled off left side of screen
+  xa. die if scrolled off left side of screen
+  aa. die if screen stops scrolling and time runs out (need timer widget? shot clock?)
   b. add more levels(!)
   c. add hostile obstacles
   d. add enemies (and ways to kill them)

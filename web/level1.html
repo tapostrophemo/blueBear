@@ -61,6 +61,11 @@ body {
   text-decoration: underline;
 }
 
+#lose {
+  height: 224px;
+  padding-top: 40px;
+}
+
 .hidden {
   display: none;
 }
@@ -78,7 +83,7 @@ body {
  <div id="start" class="statusOverlay">START<span>(press any arrow key to begin)</span></div>
  <div id="paused" class="statusOverlay hidden">PAUSED<span>(press ESC to continue)</span></div>
  <div id="win" class="statusOverlay hidden">WINNER!<span>(<a href="level2.html">click for next level</a>)</span></div>
- <div id="lose" class="statusOverlay hidden">TRY AGAIN!<span>(<a href="#" onclick="">click to try again</a>)</span></div>
+ <div id="lose" class="statusOverlay hidden">YOU LOST...<br/>SORRY&nbsp;&nbsp;&nbsp;:(<span>(<a href="#" onclick="window.location.reload()">click to try again</a>)</span></div>
 </div>
 <div id="scoreboard">
  <label id="score">Score: <span></span></label><br/>
@@ -412,6 +417,10 @@ function Player(node) {
       this.node.y(-3, true);
     }
   };
+
+  this.offScreen = function () {
+    return this.node.x() <= (-1*SPRITE_WIDTH*0.6);
+  };
 }
 
 function Rewards(node) {
@@ -566,6 +575,13 @@ $(function () {
         rewards.update(player, finishLine);
         obstacles.update(player, finishLine);
         finishLine.update(player);
+
+        if (player.offScreen()) {
+          $("#lose").fadeIn(REFRESH_RATE * 8);
+          $(document).unbind("keydown");
+          $(document).unbind("keyup");
+          return true;
+        }
 
         if (finishLine.crossedBy(player)) {
           $("#win").fadeIn(REFRESH_RATE * 4);
