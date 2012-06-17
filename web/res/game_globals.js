@@ -17,11 +17,10 @@ PLAYGROUND_HEIGHT = 264;
 
 REFRESH_RATE = 30;
 
-var playing, started, paused, score, level, animations = [];
+var playing, started, paused, score, animations = [];
 
 function updateScoreboard() {
   $("#score span").text(score);
-  $("#level span").text(level);
 }
 
 function isArrowKey(event) {

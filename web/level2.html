@@ -1,1 +1,289 @@
-TODO: build level 2 :)
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Blue Bear, Level 2</title>
+<link href='http://fonts.googleapis.com/css?family=Permanent+Marker' rel='stylesheet' type='text/css'/>
+<link rel="stylesheet" type="text/css" href="res/style.css"/>
+</head>
+<body>
+
+<div id="playground">
+ <div id="start" class="statusOverlay">START<span>(press any arrow key to begin)</span></div>
+ <div id="paused" class="statusOverlay hidden">PAUSED<span>(press ESC to continue)</span></div>
+ <div id="win" class="statusOverlay hidden">WINNER!<span>(<a id="nextLevelLink" href="level3.html">click for next level</a>)</span></div>
+ <div id="lose" class="statusOverlay hidden">YOU LOST...<br/>SORRY&nbsp;&nbsp;&nbsp;:(<span>(<a href="#" onclick="window.location.reload()">click to try again</a>)</span></div>
+</div>
+<div id="scoreboard">
+ <label id="score">Score: <span></span></label><br/>
+ <label id="level">Level: 2</label>
+</div>
+<div id="controls">
+ <div id="arrows">
+  <button id="arrowUp">&uarr;</button><br/>
+  <button id="arrowLeft">&larr;</button>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <button id="arrowRight">&rarr;</button><br/>
+  <button id="arrowDown">&darr;</button>
+ </div>
+</div>
+<div id="help">
+ <p>Use arrow keys (left, right, up, down) to move</p>
+ <p>Press escape to pause</p>
+</div>
+
+<script type="text/javascript" src="res/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="res/jquery.gamequery-0.6.2.js"></script>
+<script type="text/javascript" src="res/game_globals.js"></script>
+<script type="text/javascript" src="res/game_objects.js"></script>
+<script type="text/javascript">
+function setupAnimations() {
+  var playerOpts = {
+    imageURL: "res/player_basic.png",
+    numberOfFrame: 3,
+    delta: SPRITE_WIDTH,
+    rate: 133,
+    type: $.gameQuery.ANIMATION_HORIZONTAL,
+  };
+  var playerStoppedOpts = {
+    imageURL: "res/player_basic.png",
+    numberOfFrame: 1,
+    delta: 0,
+    rate: 0,
+    type: $.gameQuery.ANIMATION_ONCE,
+    offsetx: SPRITE_WIDTH,
+  };
+
+  playerOpts.offsety = SPRITE_HEIGHT * 3;
+  animations["playerLeft"] = new $.gameQuery.Animation(playerOpts);
+  playerStoppedOpts.offsety = SPRITE_HEIGHT * 3;
+  animations["playerStoppedLeft"] = new $.gameQuery.Animation(playerStoppedOpts);
+
+  playerOpts.offsety = 0;
+  animations["playerUp"] = new $.gameQuery.Animation(playerOpts);
+  playerStoppedOpts.offsety = 0;
+  animations["playerStoppedUp"] = new $.gameQuery.Animation(playerStoppedOpts);
+
+  playerOpts.offsety = SPRITE_HEIGHT;
+  animations["playerRight"] = new $.gameQuery.Animation(playerOpts);
+  playerStoppedOpts.offsety = SPRITE_HEIGHT;
+  animations["playerStoppedRight"] = new $.gameQuery.Animation(playerStoppedOpts);
+
+  playerOpts.offsety = SPRITE_HEIGHT * 2;
+  animations["playerDown"] = new $.gameQuery.Animation(playerOpts);
+  playerStoppedOpts.offsety = SPRITE_HEIGHT * 2;
+  animations["playerStoppedDown"] = new $.gameQuery.Animation(playerStoppedOpts);
+
+  animations["honeypot"] = new $.gameQuery.Animation({
+    imageURL: "res/honeypot.png",
+    numberOfFrame: 1,
+    delta: 0,
+    rate: 0,
+    offsetx: 0,
+    offsety: 0,
+    type: $.gameQuery.ANIMATION_ONCE});
+
+  animations["bush"] = new $.gameQuery.Animation({
+    imageURL: "res/bush.png",
+    numberOfFrame: 1,
+    delta: 0,
+    rate: 0,
+    offsetx: 0,
+    offsety: 0,
+    type: $.gameQuery.ANIMATION_ONCE});
+
+  animations["finishLine"] = new $.gameQuery.Animation({
+    imageURL: "res/finish_line.png",
+    numberOfFrame: 2,
+    delta: 11,
+    rate: 175,
+    offsetx: 0,
+    offsety: 0,
+    type: $.gameQuery.ANIMATION_HORIZONTAL});
+
+// Generated with gQ's Tiles map editor
+animations[0] =  new $.gameQuery.Animation({
+    imageURL:      'http://localhost/blueBear/res/ground_basic.png',
+    type:          $.gameQuery.ANIMATION_HORIZONTAL,
+    numberOfFrame: 1,
+    delta:         0,
+    rate:          0,
+    offsetx:       0,
+    offsety:       0
+});
+animations[1] =  new $.gameQuery.Animation({
+    imageURL:      'http://localhost/blueBear/res/ground_basic.png',
+    type:          $.gameQuery.ANIMATION_HORIZONTAL,
+    numberOfFrame: 1,
+    delta:         0,
+    rate:          0,
+    offsetx:       44,
+    offsety:       0
+});
+animations[2] =  new $.gameQuery.Animation({
+    imageURL:      'http://localhost/blueBear/res/ground_basic.png',
+    type:          $.gameQuery.ANIMATION_HORIZONTAL,
+    numberOfFrame: 1,
+    delta:         0,
+    rate:          0,
+    offsetx:       88,
+    offsety:       0
+});
+animations[3] =  new $.gameQuery.Animation({
+    imageURL:      'http://localhost/blueBear/res/ground_basic.png',
+    type:          $.gameQuery.ANIMATION_HORIZONTAL,
+    numberOfFrame: 1,
+    delta:         0,
+    rate:          0,
+    offsetx:       132,
+    offsety:       0
+});
+animations[4] =  new $.gameQuery.Animation({
+    imageURL:      'http://localhost/blueBear/res/ground_basic.png',
+    type:          $.gameQuery.ANIMATION_HORIZONTAL,
+    numberOfFrame: 1,
+    delta:         0,
+    rate:          0,
+    offsetx:       176,
+    offsety:       0
+});
+animations[5] =  new $.gameQuery.Animation({
+    imageURL:      'http://localhost/blueBear/res/ground_basic.png',
+    type:          $.gameQuery.ANIMATION_HORIZONTAL,
+    numberOfFrame: 1,
+    delta:         0,
+    rate:          0,
+    offsetx:       220,
+    offsety:       0
+});
+animations[6] =  new $.gameQuery.Animation({
+    imageURL:      'http://localhost/blueBear/res/ground_basic.png',
+    type:          $.gameQuery.ANIMATION_HORIZONTAL,
+    numberOfFrame: 1,
+    delta:         0,
+    rate:          0,
+    offsetx:       264,
+    offsety:       0
+});
+animations[7] =  new $.gameQuery.Animation({
+    imageURL:      'http://localhost/blueBear/res/ground_basic.png',
+    type:          $.gameQuery.ANIMATION_HORIZONTAL,
+    numberOfFrame: 1,
+    delta:         0,
+    rate:          0,
+    offsetx:       308,
+    offsety:       0
+});
+//---
+}
+
+function setupLayers() {
+// Generated with gQ's Tiles map editor
+var map = [[1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2],
+           [2, 1, 2, 1, 2, 1, 0, 0, 0, 1, 2, 1, 0, 0, 0, 1, 2, 1, 2, 1],
+           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+           [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1]]
+
+  var honeypots = 1, bushes = 1;
+  $.playground()
+    .addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+      .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+        .addTilemap('tilemap', map,  animations, {width: 44, height: 33, sizex: 20, sizey: 8}).end().end()
+      .addSprite("finishLine", {
+        animation: animations["finishLine"],
+        posx: $("#tilemap").width()-TILE_WIDTH,
+        posy: 0,
+        width: TILE_WIDTH,
+        height: PLAYGROUND_HEIGHT})
+      .addSprite("player", {
+        animation: animations["playerStoppedRight"],
+        posx: SPRITE_WIDTH,
+        posy: TILE_HEIGHT * 6 + SPRITE_HEIGHT,
+        width: SPRITE_WIDTH,
+        height: SPRITE_HEIGHT})
+      .addGroup("obstacles", {width: $("#tilemap").width(), height: PLAYGROUND_HEIGHT})
+        .addSprite("bush_"+bushes++, {
+          animation: animations["bush"],
+          posx: TILE_WIDTH * 3 + 30/2,
+          posy: TILE_HEIGHT * 3 + 30/2,
+          width: 30,
+          height: 30})
+        .addSprite("bush_"+bushes++, {
+          animation: animations["bush"],
+          posx: TILE_WIDTH * 8 + 30/2,
+          posy: TILE_HEIGHT * 6 + 30/2,
+          width: 30,
+          height: 30})
+        .addSprite("bush_"+bushes++, {
+          animation: animations["bush"],
+          posx: TILE_WIDTH * 12 + 30/2,
+          posy: TILE_HEIGHT * 4 + 30/2,
+          width: 30,
+          height: 30})
+        .addSprite("bush_"+bushes++, {
+          animation: animations["bush"],
+          posx: TILE_WIDTH * 16 + 30/2,
+          posy: TILE_HEIGHT * 8 + 30/2,
+          width: 30,
+          height: 30}).end()
+      .addGroup("rewards", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 4 + 18/2,
+          posy: TILE_HEIGHT * 4 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 7 + 18/2,
+          posy: TILE_HEIGHT * 2 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 9 + 18/2,
+          posy: TILE_HEIGHT * 4 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 12 + 18/2,
+          posy: TILE_HEIGHT * 7 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 14 + 18/2,
+          posy: TILE_HEIGHT * 0 + 14/2,
+          width: 22,
+          height: 15})
+        .addSprite("honeypot_"+honeypots++, {
+          animation: animations["honeypot"],
+          posx: TILE_WIDTH * 15 + 18/2,
+          posy: TILE_HEIGHT * 3 + 14/2,
+          width: 22,
+          height: 15}).end();
+}
+
+function setupRewards() {
+  for (i = 1; i <= 6; i++) {
+    var h = $("#honeypot_"+i);
+    h.addClass("reward");
+  }
+}
+
+function setupObstacles() {
+  for (i = 1; i <= 4; i++) {
+    var b = $("#bush_"+i);
+    b.addClass("obstacle");
+  }
+}
+</script>
+<script type="text/javascript" src="res/game_main.js"></script>
+</body>
+</html>
+

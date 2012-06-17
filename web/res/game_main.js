@@ -1,6 +1,10 @@
 $(function () {
   score = 0;
-  level = 1;
+  if (window.location.search) {
+    var parts = window.location.search.split("?");
+    score = parts[parts.length-1];
+  }
+
   started = false;
   playing = true;
   paused = false;
@@ -37,14 +41,16 @@ $(function () {
         finishLine.update(player);
 
         if (player.offScreen()) {
-          $("#lose").fadeIn(REFRESH_RATE * 8);
           teardownMovementHandling();
+          $("#lose").fadeIn(REFRESH_RATE * 8);
           return true;
         }
 
         if (finishLine.crossedBy(player)) {
-          $("#win").fadeIn(REFRESH_RATE * 4);
           teardownMovementHandling();
+          $("#win").fadeIn(REFRESH_RATE * 4);
+          var nextLevelUrl = $("#nextLevelLink").attr("href");
+          $("#nextLevelLink").attr("href", nextLevelUrl + "?" + score);
           return true;
         }
       }

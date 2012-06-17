@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Blue Bear</title>
+<title>Blue Bear, Level 1</title>
 <link href='http://fonts.googleapis.com/css?family=Permanent+Marker' rel='stylesheet' type='text/css'/>
 <link rel="stylesheet" type="text/css" href="res/style.css"/>
 </head>
@@ -11,12 +11,12 @@
 <div id="playground">
  <div id="start" class="statusOverlay">START<span>(press any arrow key to begin)</span></div>
  <div id="paused" class="statusOverlay hidden">PAUSED<span>(press ESC to continue)</span></div>
- <div id="win" class="statusOverlay hidden">WINNER!<span>(<a href="level2.html">click for next level</a>)</span></div>
+ <div id="win" class="statusOverlay hidden">WINNER!<span>(<a id="nextLevelLink" href="level2.html">click for next level</a>)</span></div>
  <div id="lose" class="statusOverlay hidden">YOU LOST...<br/>SORRY&nbsp;&nbsp;&nbsp;:(<span>(<a href="#" onclick="window.location.reload()">click to try again</a>)</span></div>
 </div>
 <div id="scoreboard">
  <label id="score">Score: <span></span></label><br/>
- <label id="level">Level: <span></span></label>
+ <label id="level">Level: 1</label>
 </div>
 <div id="controls">
  <div id="arrows">
