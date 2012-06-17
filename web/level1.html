@@ -417,8 +417,8 @@ function Player(node) {
 function Rewards(node) {
   this.node = node;
 
-  this.update = function (player) {
-    if (player.moved) {
+  this.update = function (player, finishLine) {
+    if (player.moved && !finishLine.completelyShowing()) {
       this.node.x(-1, true);
     }
     checkCollisions(player);
@@ -436,8 +436,8 @@ function Rewards(node) {
 function Obstacles(node) {
   this.node = node;
 
-  this.update = function (player) {
-    if (player.moved) {
+  this.update = function (player, finishLine) {
+    if (player.moved && !finishLine.completelyShowing()) {
       this.node.x(-1, true);
     }
     checkCollisions(player);
@@ -454,7 +454,7 @@ function FinishLine(node) {
   this.node = node;
 
   this.update = function (player) {
-    if (player.moved) {
+    if (player.moved && !this.completelyShowing()) {
       this.node.x(-1, true);
     }
   };
@@ -462,13 +462,17 @@ function FinishLine(node) {
   this.crossedBy = function (player) {
     return player.node.x() > this.node.x();
   };
+
+  this.completelyShowing = function () {
+    return this.node.x() <= (PLAYGROUND_WIDTH - this.node.width());
+  };
 }
 
 function Background(node) {
   this.node = node;
 
-  this.update = function (player) {
-    if (player.moved) {
+  this.update = function (player, finishLine) {
+    if (player.moved && !finishLine.completelyShowing()) {
       this.node.x(-1, true);
       player.node.x(-1, true);
     }
@@ -557,11 +561,12 @@ $(function () {
     $.playground().registerCallback(function () {
       if (playing && !paused) {
         player.update();
-        background.update(player);
-        rewards.update(player);
-        obstacles.update(player);
 
+        background.update(player, finishLine);
+        rewards.update(player, finishLine);
+        obstacles.update(player, finishLine);
         finishLine.update(player);
+
         if (finishLine.crossedBy(player)) {
           $("#win").fadeIn(REFRESH_RATE * 4);
           $(document).unbind("keydown");

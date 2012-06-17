@@ -1,5 +1,5 @@
 Feature complete:
-x1.a, x1.b, x1.c, 2.a., 2.c, 3.a, 3.b, 5.a
+x1.a, x1.b, x1.c, 2.a., x2.c, 3.a (therfore 1d), 3.b, 5.a
 
 1. screen transitions
   xa. start game ("click to play" sort of thing, splash screen)
@@ -9,7 +9,7 @@ x1.a, x1.b, x1.c, 2.a., 2.c, 3.a, 3.b, 5.a
 2. physics
   a. prevent walking in air (unless wearing flying suit)
   b. prevent walking on water (unless wearing swimming/dive suit)
-  c. stop scrolling when finish line fully in view
+  xc. stop scrolling when finish line fully in view
 3. gameplay
   a. die if scrolled off left side of screen
   b. add more levels(!)
