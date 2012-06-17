@@ -1,0 +1,71 @@
+body {
+  position: relative;
+}
+
+#scoreboard {
+  position: absolute;
+  top: 0;
+  left: 367px;
+  font-family: monospace;
+  color: #223;
+}
+
+#controls {
+  position: absolute;
+  top: 156px;
+  left: 367px;
+}
+#arrows {
+  text-align: center;
+}
+
+#playground {
+  border: 1px solid #445;
+  border-radius: 7px;
+  background-color: #bcf;
+}
+
+.statusOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  text-align: center;
+  font-family: "Permanent Marker", cursive;
+  font-size: 48px;
+  line-height: 75px;
+  width: 352px;
+  height: 184px;
+  padding-top: 80px;
+  vertical-align: middle;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+.statusOverlay span {
+  display: block;
+  font-family: monospace;
+  font-size: 15px;
+}
+.statusOverlay a {
+  color: white;
+  text-decoration: none;
+}
+.statusOverlay a:hover {
+  text-decoration: underline;
+}
+
+#lose {
+  height: 224px;
+  padding-top: 40px;
+}
+
+.hidden {
+  display: none;
+}
+
+#help {
+  position: absolute;
+  top: 275px;
+  font-family: monospace;
+}
+
