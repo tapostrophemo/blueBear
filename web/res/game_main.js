@@ -28,8 +28,6 @@ $(function () {
     var finishLine = new FinishLine($("#finishLine"));
     var rewards = new Rewards($("#rewards"));
     var obstacles = new Obstacles($("#obstacles"));
-    setupRewards();
-    setupObstacles();
 
     $.playground().registerCallback(function () {
       if (playing && !paused) {

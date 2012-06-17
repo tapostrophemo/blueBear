@@ -174,7 +174,6 @@ animations[7] =  new $.gameQuery.Animation({
     offsetx:       308,
     offsety:       0
 });
-//---
 }
 
 function setupLayers() {
@@ -186,101 +185,70 @@ var map = [[1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2],
            [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
            [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
            [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
-           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1]]
+           [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1]];
 
-  var honeypots = 1, bushes = 1;
-  $.playground()
-    .addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-      .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-        .addTilemap('tilemap', map,  animations, {width: 44, height: 33, sizex: 20, sizey: 8}).end().end()
-      .addSprite("finishLine", {
-        animation: animations["finishLine"],
-        posx: $("#tilemap").width()-TILE_WIDTH,
-        posy: 0,
-        width: TILE_WIDTH,
-        height: PLAYGROUND_HEIGHT})
-      .addSprite("player", {
-        animation: animations["playerStoppedRight"],
-        posx: SPRITE_WIDTH,
-        posy: TILE_HEIGHT * 6 + SPRITE_HEIGHT,
-        width: SPRITE_WIDTH,
-        height: SPRITE_HEIGHT})
-      .addGroup("obstacles", {width: $("#tilemap").width(), height: PLAYGROUND_HEIGHT})
-        .addSprite("bush_"+bushes++, {
-          animation: animations["bush"],
-          posx: TILE_WIDTH * 3 + 30/2,
-          posy: TILE_HEIGHT * 3 + 30/2,
-          width: 30,
-          height: 30})
-        .addSprite("bush_"+bushes++, {
-          animation: animations["bush"],
-          posx: TILE_WIDTH * 8 + 30/2,
-          posy: TILE_HEIGHT * 6 + 30/2,
-          width: 30,
-          height: 30})
-        .addSprite("bush_"+bushes++, {
-          animation: animations["bush"],
-          posx: TILE_WIDTH * 12 + 30/2,
-          posy: TILE_HEIGHT * 4 + 30/2,
-          width: 30,
-          height: 30})
-        .addSprite("bush_"+bushes++, {
-          animation: animations["bush"],
-          posx: TILE_WIDTH * 16 + 30/2,
-          posy: TILE_HEIGHT * 8 + 30/2,
-          width: 30,
-          height: 30}).end()
-      .addGroup("rewards", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-        .addSprite("honeypot_"+honeypots++, {
-          animation: animations["honeypot"],
-          posx: TILE_WIDTH * 4 + 18/2,
-          posy: TILE_HEIGHT * 4 + 14/2,
-          width: 22,
-          height: 15})
-        .addSprite("honeypot_"+honeypots++, {
-          animation: animations["honeypot"],
-          posx: TILE_WIDTH * 7 + 18/2,
-          posy: TILE_HEIGHT * 2 + 14/2,
-          width: 22,
-          height: 15})
-        .addSprite("honeypot_"+honeypots++, {
-          animation: animations["honeypot"],
-          posx: TILE_WIDTH * 9 + 18/2,
-          posy: TILE_HEIGHT * 4 + 14/2,
-          width: 22,
-          height: 15})
-        .addSprite("honeypot_"+honeypots++, {
-          animation: animations["honeypot"],
-          posx: TILE_WIDTH * 12 + 18/2,
-          posy: TILE_HEIGHT * 7 + 14/2,
-          width: 22,
-          height: 15})
-        .addSprite("honeypot_"+honeypots++, {
-          animation: animations["honeypot"],
-          posx: TILE_WIDTH * 14 + 18/2,
-          posy: TILE_HEIGHT * 0 + 14/2,
-          width: 22,
-          height: 15})
-        .addSprite("honeypot_"+honeypots++, {
-          animation: animations["honeypot"],
-          posx: TILE_WIDTH * 15 + 18/2,
-          posy: TILE_HEIGHT * 3 + 14/2,
-          width: 22,
-          height: 15}).end();
-}
+  var bushes = [
+    [TILE_WIDTH *  1, TILE_HEIGHT * 4],
+    [TILE_WIDTH *  4, TILE_HEIGHT * 6],
+    [TILE_WIDTH *  8, TILE_HEIGHT * 6],
+    [TILE_WIDTH * 13, TILE_HEIGHT * 3],
+    [TILE_WIDTH * 13, TILE_HEIGHT * 6.5],
+    [TILE_WIDTH * 14, TILE_HEIGHT * 6.5],
+    [TILE_WIDTH * 18, TILE_HEIGHT * 3],
+    [TILE_WIDTH * 19, TILE_HEIGHT * 6]];
+  var honeypots = [
+    [TILE_WIDTH *  2, TILE_HEIGHT * 5],
+    [TILE_WIDTH *  3, TILE_HEIGHT * 3],
+    [TILE_WIDTH *  6, TILE_HEIGHT * 6],
+    [TILE_WIDTH *  9, TILE_HEIGHT * 5],
+    [TILE_WIDTH * 10, TILE_HEIGHT * 7],
+    [TILE_WIDTH * 12, TILE_HEIGHT * 3],
+    [TILE_WIDTH * 14, TILE_HEIGHT * 2],
+    [TILE_WIDTH * 15, TILE_HEIGHT * 1],
+    [TILE_WIDTH * 17, TILE_HEIGHT * 5],
+    [TILE_WIDTH * 18, TILE_HEIGHT * 2]];
 
-function setupRewards() {
-  for (i = 1; i <= 6; i++) {
-    var h = $("#honeypot_"+i);
-    h.addClass("reward");
+  var i;
+
+  var mainGroup = $.playground().addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
+  mainGroup.addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+      .addTilemap('tilemap', map,  animations, {width: 44, height: 33, sizex: 20, sizey: 8}).end().end();
+  mainGroup.addSprite("finishLine", {
+    animation: animations["finishLine"],
+    posx: $("#tilemap").width()-TILE_WIDTH,
+    posy: 0,
+    width: TILE_WIDTH,
+    height: PLAYGROUND_HEIGHT});
+  mainGroup.addSprite("player", {
+    animation: animations["playerStoppedRight"],
+    posx: SPRITE_WIDTH,
+    posy: TILE_HEIGHT + SPRITE_HEIGHT,
+    width: SPRITE_WIDTH,
+    height: SPRITE_HEIGHT});
+
+  var obstacleGroup = mainGroup.addGroup("obstacles", {width: $("#tilemap").width(), height: PLAYGROUND_HEIGHT});
+  for (i = 0; i < bushes.length; i++) {
+    obstacleGroup.addSprite("bush_"+(i+1), {
+      animation: animations["bush"],
+      posx: bushes[i][0] + 30/2,
+      posy: bushes[i][1] + 30/2,
+      width: 30,
+      height: 30});
   }
-}
+  obstacleGroup.end();
+  $("#obstacles .sprite").addClass("obstacle");
 
-function setupObstacles() {
-  for (i = 1; i <= 4; i++) {
-    var b = $("#bush_"+i);
-    b.addClass("obstacle");
+  var rewardGroup = mainGroup.addGroup("rewards", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
+  for (i = 0; i < honeypots.length; i++) {
+    rewardGroup.addSprite("honeypot_"+(i+1), {
+      animation: animations["honeypot"],
+      posx: honeypots[i][0] + 18/2,
+      posy: honeypots[i][1] + 14/2,
+      width: 22,
+      height: 15});
   }
+  rewardGroup.end();
+  $("#rewards .sprite").addClass("reward");
 }
 </script>
 <script type="text/javascript" src="res/game_main.js"></script>
