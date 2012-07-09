@@ -12,11 +12,30 @@ body {
 
 #controls {
   position: absolute;
-  top: 156px;
+  top: 70px;
   left: 367px;
 }
-#arrows {
+#pause {
+  width: 99px;
+  height: 35px;
+  margin: 0 auto;
   text-align: center;
+  font-family: "Permanent Marker", cursive;
+  font-size: 22px;
+  color: white;
+  background: transparent url('pauseButtonBg.png') top left no-repeat;
+}
+#arrows {
+  margin-top: 40px;
+  width: 128px;
+  height: 128px;
+  background-image: url('dpad2.png');
+  text-align: center;
+}
+#arrows button {
+  line-height: 37px;
+  width: 37px;
+  /*visibility: hidden;*/
 }
 
 #playground {
@@ -61,11 +80,5 @@ body {
 
 .hidden {
   display: none;
-}
-
-#help {
-  position: absolute;
-  top: 275px;
-  font-family: monospace;
 }
 

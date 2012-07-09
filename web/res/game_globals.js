@@ -101,6 +101,84 @@ function setupMovementHandling($player) {
       case KEY_ESC:   togglePause();       break;
     }
   });
+
+  var lastFacing = undefined;
+
+  var controlsOffset = $("#controls").offset();
+  $("#arrows")
+    .hammer({prevent_default: true, hold_timeout: REFRESH_RATE})
+    .bind("hold", function (e) {
+      var x = e.originalEvent.pageX - controlsOffset.left - this.offsetLeft;
+      var y = e.originalEvent.pageY - controlsOffset.top - this.offsetTop;
+      var button = pointToButton(x, y);
+      if (button) {
+        if (!started) {
+          $("#start").fadeOut(REFRESH_RATE * 2);
+          started = true;
+        }
+        moveFacing(button);
+        lastFacing = button;
+      }
+    })
+    .bind("drag", function (e) {
+      var x = e.originalEvent.pageX - controlsOffset.left - this.offsetLeft;
+      var y = e.originalEvent.pageY - controlsOffset.top - this.offsetTop;
+      var button = pointToButton(x, y);
+      if (button) {
+        if (!started) {
+          $("#start").fadeOut(REFRESH_RATE * 2);
+          started = true;
+        }
+        moveFacing(button);
+        lastFacing = button;
+      } else {
+        stopMoveFacing(lastFacing);
+        lastFacing = undefined;
+      }
+    })
+    .bind("release", function (e) {
+      var x = e.originalEvent.pageX - controlsOffset.left - this.offsetLeft;
+      var y = e.originalEvent.pageY - controlsOffset.top - this.offsetTop;
+      var button = pointToButton(x, y);
+      if (button) {
+        stopMoveFacing(button);
+      } else {
+        stopMoveFacing(lastFacing);
+      }
+    });
+  function withinBox(box, x, y) {
+    return x >= box.topLeft[0] && x <= box.bottomRight[0]
+        && y >= box.topLeft[1] && y <= box.bottomRight[1];
+  }
+  BUTTON_POINTS = [
+    {topLeft: [20,23], bottomRight:[53,54]}, // up
+    {topLeft: [73,23], bottomRight:[104,54]}, // right
+    {topLeft: [20,74], bottomRight: [53,104]}, // left
+    {topLeft: [73,74], bottomRight: [104,104]}, // down
+  ];
+  var ccw45 = -45 * Math.PI / 180;
+  function pointToButton(x, y) {
+    var rotX = Math.floor(Math.cos(ccw45)*(x-64) - Math.sin(ccw45)*(y-64) + 64);
+    var rotY = Math.floor(Math.sin(ccw45)*(x-64) + Math.cos(ccw45)*(y-64) + 64);
+
+    if (withinBox(BUTTON_POINTS[0], rotX, rotY)) {
+      return "up";
+    } else if (withinBox(BUTTON_POINTS[1], rotX, rotY)) {
+      return "right";
+    } else if (withinBox(BUTTON_POINTS[2], rotX, rotY)) {
+      return "left";
+    } else if (withinBox(BUTTON_POINTS[3], rotX, rotY)) {
+      return "down";
+    } else {
+      return undefined;
+    }
+  }
+
+  $("#pause").click(function (e) {
+    if (!started) return;
+    togglePause();
+  });
+
   $("#arrows button").on("mousedown touchstart", function (e) {
     var kde = $.Event("keydown");
     switch (this.id) {
@@ -113,6 +191,7 @@ function setupMovementHandling($player) {
     $(document).trigger(kde);
     return false;
   });
+
   $("#arrows button").on("mouseup mouseout touchcancel touchend", function (e) {
     var kue = $.Event("keyup");
     switch (this.id) {
@@ -125,6 +204,7 @@ function setupMovementHandling($player) {
     $(document).trigger(kue);
     return false;
   });
+
   $(document).keyup(function (e) {
     switch (e.which) {
       case KEY_LEFT:  stopMoveFacing("left");  break;

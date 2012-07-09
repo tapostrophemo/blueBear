@@ -7,15 +7,34 @@ h1 {
   font-family: "Permanent Marker", cursive;
   font-size: 42px;
   color: #223;
+  padding-left: 250px;
+}
+#playingField, #help {
+  position: absolute;
+  top: 60px;
+}
+#playingField {
+  left: 250px;
+}
+#help {
+  font-family: monospace;
+  width: 240px;
 }
 </style>
 </head>
 <body>
 
-<h1 style="text-align: center;">Blue Bear</h1>
+<h1>Blue Bear</h1>
 
-<div style="margin:0 auto; width:500px">
- <iframe src="level1.html" width="500" height="400" frameborder="0"></iframe>
+<div id="playingField">
+ <iframe src="level1.html" width="525" height="295" frameborder="0"></iframe>
+</div>
+<div id="help">
+ <h3>Tips</h3>
+ <p>Use arrow keys to move</p>
+ <p>Collect honeypots to win</p>
+ <p>Avoid obstacles and enemies</p>
+ <p>Press escape/Pause to pause the game</p>
 </div>
 
 </body>
