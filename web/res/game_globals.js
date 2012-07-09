@@ -30,7 +30,59 @@ function isArrowKey(event) {
          event.which == KEY_DOWN;
 }
 
+function togglePause() {
+  paused = !paused;
+  if (paused) {
+    $("#paused").fadeIn(REFRESH_RATE * 3);
+  } else {
+    $("#paused").fadeOut(REFRESH_RATE);
+  }
+}
+
 function setupMovementHandling($player) {
+  function moveFacing(direction) {
+    // TODO: get rid of the awful hack where I peer inside gameQuery and set its keyTracker...
+    switch (direction) {
+      case "left":
+        $player.setAnimation(animations["playerLeft"]);
+        $.gameQuery.keyTracker[KEY_LEFT] = true;
+        break;
+      case "up":
+        $player.setAnimation(animations["playerUp"]);
+        $.gameQuery.keyTracker[KEY_UP] = true;
+        break;
+      case "right":
+        $player.setAnimation(animations["playerRight"]);
+        $.gameQuery.keyTracker[KEY_RIGHT] = true;
+        break;
+      case "down":
+        $player.setAnimation(animations["playerDown"]);
+        $.gameQuery.keyTracker[KEY_DOWN] = true;
+        break;
+    }
+  }
+
+  function stopMoveFacing(direction) {
+    switch (direction) {
+      case "left":
+        $player.setAnimation(animations["playerStoppedLeft"]);
+        $.gameQuery.keyTracker[KEY_LEFT] = false;
+        break;
+      case "up":
+        $player.setAnimation(animations["playerStoppedUp"]);
+        $.gameQuery.keyTracker[KEY_UP] = false;
+        break;
+      case "right":
+        $player.setAnimation(animations["playerStoppedRight"]);
+        $.gameQuery.keyTracker[KEY_RIGHT] = false;
+        break;
+      case "down":
+        $player.setAnimation(animations["playerStoppedDown"]);
+        $.gameQuery.keyTracker[KEY_DOWN] = false;
+        break;
+    }
+  }
+
   $(document).keydown(function (e) {
     if (!started && e.which == KEY_ESC) {
       return;
@@ -42,21 +94,14 @@ function setupMovementHandling($player) {
     }
 
     switch (e.which) {
-      case KEY_LEFT:  $player.setAnimation(animations["playerLeft"]);  break;
-      case KEY_UP:    $player.setAnimation(animations["playerUp"]);    break;
-      case KEY_RIGHT: $player.setAnimation(animations["playerRight"]); break;
-      case KEY_DOWN:  $player.setAnimation(animations["playerDown"]);  break;
-      case KEY_ESC:
-        paused = !paused;
-        if (paused) {
-          $("#paused").fadeIn(REFRESH_RATE * 3);
-        } else {
-          $("#paused").fadeOut(REFRESH_RATE);
-        }
-        break;
+      case KEY_LEFT:  moveFacing("left");  break;
+      case KEY_UP:    moveFacing("up");    break;
+      case KEY_RIGHT: moveFacing("right"); break;
+      case KEY_DOWN:  moveFacing("down");  break;
+      case KEY_ESC:   togglePause();       break;
     }
   });
-  $("#arrows button").click(function (e) {
+  $("#arrows button").on("mousedown touchstart", function (e) {
     var kde = $.Event("keydown");
     switch (this.id) {
       // NB: ---------------------------------> gameTracker not checking 'which' on keydown events
@@ -68,19 +113,33 @@ function setupMovementHandling($player) {
     $(document).trigger(kde);
     return false;
   });
+  $("#arrows button").on("mouseup mouseout touchcancel touchend", function (e) {
+    var kue = $.Event("keyup");
+    switch (this.id) {
+      // NB: ---------------------------------> gameTracker not checking 'which' on keydown events
+      case 'arrowLeft':  kue.which = KEY_LEFT;  kue.keyCode = KEY_LEFT;  break;
+      case 'arrowUp':    kue.which = KEY_UP;    kue.keyCode = KEY_UP;    break;
+      case 'arrowRight': kue.which = KEY_RIGHT; kue.keyCode = KEY_RIGHT; break;
+      case 'arrowDown':  kue.which = KEY_DOWN;  kue.keyCode = KEY_DOWN;  break;
+    }
+    $(document).trigger(kue);
+    return false;
+  });
   $(document).keyup(function (e) {
     switch (e.which) {
-      case KEY_LEFT:  $player.setAnimation(animations["playerStoppedLeft"]);  break;
-      case KEY_UP:    $player.setAnimation(animations["playerStoppedUp"]);    break;
-      case KEY_RIGHT: $player.setAnimation(animations["playerStoppedRight"]); break;
-      case KEY_DOWN:  $player.setAnimation(animations["playerStoppedDown"]);  break;
+      case KEY_LEFT:  stopMoveFacing("left");  break;
+      case KEY_UP:    stopMoveFacing("up");    break;
+      case KEY_RIGHT: stopMoveFacing("right"); break;
+      case KEY_DOWN:  stopMoveFacing("down");  break;
     }
   });
 }
 
 function teardownMovementHandling() {
-  $(document).unbind("keydown");
-  $(document).unbind("keyup");
+  $(document).off("keydown");
+  $(document).off("keyup");
+  $("#pause").off("click");
+  $("#arrows button").off("mousedown touchstart mouseup mouseout touchcancel touchend");
 }
 
 function setupPlayerAnimations(imageUrl) {
