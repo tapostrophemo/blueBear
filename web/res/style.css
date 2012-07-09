@@ -35,7 +35,7 @@ body {
 #arrows button {
   line-height: 37px;
   width: 37px;
-  /*visibility: hidden;*/
+  visibility: hidden;
 }
 
 #playground {
