@@ -1,22 +1,29 @@
-Feature complete:
-x1.a, x1.b, x1.c, x2.a., x2.c, x3.a (therfore x1d), x3.b (therefore x3.bb), 5.a
+MVP Feature complete:
+x1.a, x1.b, x1.c, x2.a., x2.c, x3.a (therfore x1d), x3.b (therefore x3.bb), x5.a
+
+Needed for Release 1.0 - a "pretty good" game:
+(TODO: prioritize)
 
 1. screen transitions
-  xa. start game ("click to play" sort of thing, splash screen)
-  xb. paused state screen overlay
-  xc. win! :) and transition to next level
-  xd. lose :( and replay option
+ xa. start game ("click to play" sort of thing, splash screen)
+ xb. paused state screen overlay
+ xc. win! :) and transition to next level
+ xd. lose :( and replay option
+  e. intro
+  f. credits
+  g. options
+  h. high scores
 2. physics
-  xa. prevent walking in air
+ xa. prevent walking in air
   aa. (unless wearing flying suit)
-  xb. prevent walking on water
+ xb. prevent walking on water
   bb. (unless wearing swimming/dive suit)
-  xc. stop scrolling when finish line fully in view
+ xc. stop scrolling when finish line fully in view
 3. gameplay
-  xa. die if scrolled off left side of screen
+ xa. die if scrolled off left side of screen
   aa. die if screen stops scrolling and time runs out (need timer widget? shot clock?)
-  xb. add more levels(!)
-  xbb. carry score from level N-1 to level N
+ xb. add more levels(!)
+ xbb. carry score from level N-1 to level N
   c. add hostile obstacles
   d. add enemies (and ways to kill them)
   e. add level/time point bonuses
@@ -24,10 +31,12 @@ x1.a, x1.b, x1.c, x2.a., x2.c, x3.a (therfore x1d), x3.b (therefore x3.bb), 5.a
   a. save high scores (also need high score screen)
   b. tracking cookies
 5. experience
-  a. make mobile/touch version work(!)
+ xa. make mobile/touch version work(!)
+  aa. make mobile/touch version work without needing BUTTONs
   b. way better graphics($?)
   c. background music, sound fx
+  d. need "worlds", not just levels? groups of similarly-themed levels? farm-level? forest-level?
 6. technical debt
-  ...a. factor out core game play/control logic to common file
-  ...b. make level-specific separate HTML files (assumes next-level transition will load new level file)
+  a. factor out core game play/control logic to common file(s)
+ xb. make level-specific separate HTML files (assumes next-level transition will load new level file)
 
