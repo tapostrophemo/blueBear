@@ -72,6 +72,10 @@ body {
 .statusOverlay a:hover {
   text-decoration: underline;
 }
+#underConstruction {
+  padding-top: 55px;
+  padding-bottom: 25px;
+}
 
 #lose {
   height: 224px;
