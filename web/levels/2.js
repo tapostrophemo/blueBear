@@ -91,7 +91,6 @@ var map = [[1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2],
       height: TILE_HEIGHT});
   }
   obstacleGroup.end();
-  $("#obstacles .sprite").addClass("obstacle");
 
   var rewardGroup = mainGroup.addGroup("rewards", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
   for (i = 0; i < honeypots.length; i++) {
@@ -103,6 +102,5 @@ var map = [[1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2],
       height: 15});
   }
   rewardGroup.end();
-  $("#rewards .sprite").addClass("reward");
 }
 

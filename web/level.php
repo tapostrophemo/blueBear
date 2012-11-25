@@ -40,7 +40,7 @@ if (!preg_match('/^\d+$/', $score)) $score = 0;
 </div>
 
 <script type="text/javascript" src="res/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="res/jquery.gamequery-0.6.2.js"></script>
+<script type="text/javascript" src="res/jquery.gamequery-0.7.0.js"></script>
 
 
 <?php if (!file_exists("levels/${level}.js")): ?>

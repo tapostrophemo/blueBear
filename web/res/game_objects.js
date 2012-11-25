@@ -60,7 +60,7 @@ function Rewards(node) {
   };
 
   function checkCollisions(player) {
-    player.node.collision(".group,.reward").each(function () {
+    player.node.collision(".gQ_group,#rewards .gQ_sprite").each(function () {
       $(this).remove();
       score++;
       updateScoreboard();
@@ -80,7 +80,7 @@ function Obstacles(node) {
   }
 
   function checkCollisions(player) {
-    player.node.collision(".group,.obstacle").each(function () {
+    player.node.collision(".gQ_group,#obstacles .gQ_sprite").each(function () {
       player.bumpBack();
     });
   }
