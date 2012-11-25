@@ -19,6 +19,7 @@ $(function () {
     updateScoreboard();
 
     var background = new Background($("#background"));
+    var sky = $("#sky").length > 0 ? new Sky($("#sky")) : null;
     var finishLine = new FinishLine($("#finishLine"));
     var rewards = new Rewards($("#rewards"));
     var obstacles = new Obstacles($("#obstacles"));
@@ -28,6 +29,7 @@ $(function () {
         player.update();
 
         background.update(player, finishLine);
+        if (sky) sky.update(player, finishLine);
         rewards.update(player, finishLine);
         obstacles.update(player, finishLine);
         finishLine.update(player);

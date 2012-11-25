@@ -290,6 +290,8 @@ function setupObjectAnimations() {
 }
 
 function setupBackgroundAnimations() {
+  animations["sky"] = new $.gQ.Animation({imageURL: "res/sky.png"});
+
 // Generated with gQ's Tiles map editor
 animations[0] =  new $.gameQuery.Animation({
     imageURL:      'res/ground_basic.png',

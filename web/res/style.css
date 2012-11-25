@@ -44,6 +44,10 @@ body {
   background-color: #bcf;
 }
 
+#sky {
+  background: transparent url('sky.png') top left repeat-x;
+}
+
 .statusOverlay {
   position: absolute;
   top: 0;

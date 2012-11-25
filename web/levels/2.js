@@ -59,6 +59,7 @@ var map = [[1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2],
   var i;
 
   var mainGroup = $.playground().addGroup("main", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
+  mainGroup.addSprite("sky", {posx: 0, posy: 0, width: map[0].length * TILE_WIDTH, height: PLAYGROUND_HEIGHT});
   mainGroup.addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
       .addTilemap('tilemap', map,  animations, {width: 44, height: 33, sizex: 20, sizey: 8}).end().end();
   mainGroup.addSprite("finishLine", {

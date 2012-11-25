@@ -117,3 +117,15 @@ function Background(node) {
   };
 }
 
+function Sky(node) {
+  this.node = node;
+  node[0].sky = this;
+  var speed = 1;
+
+  this.update = function (player, finishLine) {
+    if (player.moved && !finishLine.completelyShowing()) {
+      if (speed++ % 2 == 0) this.node.x(-1, true);
+    }
+  };
+}
+
