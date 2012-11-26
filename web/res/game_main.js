@@ -1,4 +1,6 @@
 $(function () {
+  window.focus();
+
   started = false;
   playing = true;
   paused = false;
@@ -12,43 +14,50 @@ $(function () {
   var player = new Player($player);
   setupMovementHandling($player);
 
-  $.playground().startGame(function () {
-    var i;
+  soundManager.url = "res/";//soundmanager2.swf";
+  soundManager.debugMode = false;
+  var mainTheme = new $.gameQuery.SoundWrapper("res/mainTheme.mp3", true);
+ 
+  soundManager.onready(function () {
+    $.playground().startGame(function () {
+      var i;
 
-    window.focus();
-    updateScoreboard();
+      updateScoreboard();
 
-    var background = new Background($("#background"));
-    var sky = $("#sky").length > 0 ? new Sky($("#sky")) : null;
-    var finishLine = new FinishLine($("#finishLine"));
-    var rewards = new Rewards($("#rewards"));
-    var obstacles = new Obstacles($("#obstacles"));
+      mainTheme.play();
 
-    $.playground().registerCallback(function () {
-      if (playing && !paused) {
-        player.update();
+      var background = new Background($("#background"));
+      var sky = $("#sky").length > 0 ? new Sky($("#sky")) : null;
+      var finishLine = new FinishLine($("#finishLine"));
+      var rewards = new Rewards($("#rewards"));
+      var obstacles = new Obstacles($("#obstacles"));
 
-        background.update(player, finishLine);
-        if (sky) sky.update(player, finishLine);
-        rewards.update(player, finishLine);
-        obstacles.update(player, finishLine);
-        finishLine.update(player);
+      $.playground().registerCallback(function () {
+        if (playing && !paused) {
+          player.update();
 
-        if (player.offScreen()) {
-          teardownMovementHandling();
-          $("#lose").fadeIn(REFRESH_RATE * 8);
-          return true;
+          background.update(player, finishLine);
+          if (sky) sky.update(player, finishLine);
+          rewards.update(player, finishLine);
+          obstacles.update(player, finishLine);
+          finishLine.update(player);
+
+          if (player.offScreen()) {
+            teardownMovementHandling();
+            $("#lose").fadeIn(REFRESH_RATE * 8);
+            return true;
+          }
+
+          if (finishLine.crossedBy(player)) {
+            teardownMovementHandling();
+            $("#win").fadeIn(REFRESH_RATE * 4);
+            var nextLevelUrl = $("#nextLevelLink").attr("href");
+            $("#nextLevelLink").attr("href", nextLevelUrl + score);
+            return true;
+          }
         }
-
-        if (finishLine.crossedBy(player)) {
-          teardownMovementHandling();
-          $("#win").fadeIn(REFRESH_RATE * 4);
-          var nextLevelUrl = $("#nextLevelLink").attr("href");
-          $("#nextLevelLink").attr("href", nextLevelUrl + score);
-          return true;
-        }
-      }
-    }, REFRESH_RATE);
+      }, REFRESH_RATE);
+    });
   });
 });
 

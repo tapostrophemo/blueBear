@@ -39,13 +39,14 @@ if (!preg_match('/^\d+$/', $score)) $score = 0;
  </div>
 </div>
 
-<script type="text/javascript" src="res/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="res/jquery.gamequery-0.7.0.js"></script>
-
+<script src="res/jquery-1.7.2.min.js"></script>
+<script src="res/soundmanager2-nodebug-jsmin.js"></script>
+<script src="res/jquery.gamequery-0.7.0.js"></script>
+<script src="res/jquery.gamequery.soundwrapper.soundmanager2-0.6.0.js"></script>
 
 <?php if (!file_exists("levels/${level}.js")): ?>
 
-<script type="text/javascript">
+<script>
 PLAYGROUND_WIDTH = 352;
 PLAYGROUND_HEIGHT = 264;
 $(function () {
@@ -57,18 +58,17 @@ $(function () {
 
 <?php else: ?>
 
-<script type="text/javascript" src="res/hammer.js"></script>
-<script type="text/javascript" src="res/jquery.hammer.js"></script>
-<script type="text/javascript" src="res/game_globals.js"></script>
-<script type="text/javascript" src="res/game_objects.js"></script>
-<script type="text/javascript">
+<script src="res/hammer.js"></script>
+<script src="res/jquery.hammer.js"></script>
+<script src="res/game_globals.js"></script>
+<script src="res/game_objects.js"></script>
+<script>
 <?php require("levels/${level}.js"); ?>
 score = <?=$score?>;
 </script>
-<script type="text/javascript" src="res/game_main.js"></script>
+<script src="res/game_main.js"></script>
 
 <?php endif; ?>
-
 
 </body>
 </html>
